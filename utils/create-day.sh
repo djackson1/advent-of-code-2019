@@ -23,10 +23,30 @@ const a = () => {
 
   console.log("'`a = ${solution}`'")
 }
-a();
+const b = () => {
+  console.log("'`b = ?`'")
+}
+
+var runningAsScript = !module.parent;
+if(runningAsScript) {
+  a();
+  b();
+}
 " >> $folder_path/main.js
 
 touch $folder_path/main.spec.js
 echo -n > $folder_path/main.spec.js
+echo "const chai = require('chai')
+const expect = chai.expect
+
+describe('day ${day}', () => {
+  describe('part a examples', () => {
+    // tests
+  })
+
+  describe('part b examples', () => {
+    // tests
+  })
+})" >> $folder_path/main.spec.js
 
 cd -
