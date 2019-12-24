@@ -2,21 +2,19 @@ const { getInputs } = require('../../utils/files')
 
 const inputs =  getInputs(4)[0]
 
+const areTokensInOrder = tokens => tokens.reduce((inOrder, value, index, arr) => {
+  return inOrder && (index !== arr.length - 1 ? value <= arr[index + 1] : true)
+}, true)
+
 const isValidPassword = password => {
   const tokens = String(password).split('').map(Number)
 
   let hasAdjacentDigits = false
-  let isInDescendingOrder = true
 
   for(var i=0; i<tokens.length; i++) {
     const curToken = tokens[i]
     if(i !== tokens.length - 1) {
       const nextToken = tokens[i + 1]
-      
-      if(curToken > nextToken) {
-        isInDescendingOrder = false
-        break;
-      }
 
       if(curToken === nextToken) {
         hasAdjacentDigits = true
@@ -24,7 +22,7 @@ const isValidPassword = password => {
     }
   }
 
-  return hasAdjacentDigits && isInDescendingOrder
+  return areTokensInOrder(tokens) && hasAdjacentDigits
 }
 
 const a = () => {
@@ -39,23 +37,16 @@ const a = () => {
 
   console.log(`a = ${count}`)
 }
-a();
 
 const isValidPassword2 = password => {
   const tokens = String(password).split('').map(Number)
 
   let hasAdjacentDigits = false
-  let isInDescendingOrder = true
 
   for(var i=0; i<tokens.length; i++) {
     const curToken = tokens[i]
     if(i !== tokens.length - 1) {
       const nextToken = tokens[i + 1]
-      
-      if(curToken > nextToken) {
-        isInDescendingOrder = false
-        break;
-      }
 
       // check for adjacent
       if(curToken === nextToken) {
@@ -79,7 +70,7 @@ const isValidPassword2 = password => {
     }
   }
 
-  return hasAdjacentDigits && isInDescendingOrder
+  return areTokensInOrder(tokens) && hasAdjacentDigits
 }
 
 const b = () => {
@@ -94,7 +85,12 @@ const b = () => {
 
   console.log(`b = ${count}`)
 }
-b();
+
+var runningAsScript = !module.parent;
+if(runningAsScript) {
+  a();
+  b();
+}
 
 module.exports = {
   isValidPassword,
