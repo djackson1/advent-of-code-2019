@@ -32,6 +32,8 @@ if(runningAsScript) {
   a();
   b();
 }
+
+module.exports = {}
 " >> $folder_path/main.js
 
 touch $folder_path/main.spec.js
