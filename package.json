@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/djackson1/advent-of-code-2019#readme",
   "dependencies": {
-    "fs-extra": "^8.1.0"
+    "chai": "^4.2.0",
+    "fs-extra": "^8.1.0",
+    "mocha": "^6.2.2"
   }
 }
