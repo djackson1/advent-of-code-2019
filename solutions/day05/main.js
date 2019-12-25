@@ -2,12 +2,7 @@ const { getInputs } = require('../../utils/files')
 
 const inputs =  getInputs(5)[0]
 
-const a = () => {
-  let instructions = inputs.split(',').map(Number)
-
-  // set from the site
-  const defaultInput = 1;
-
+const runOpcodeInstructions = (instructions, defaultInput) => {
   for(var head = 0; head < instructions.length; ) {
     const instruction = instructions[head];
     const opcode = Number(String(instruction).slice(-2))
@@ -47,11 +42,21 @@ const a = () => {
       break;
     }
   }
+}
 
-  console.log(`a = ${solution}`)
+const a = () => {
+  const instructions = inputs.split(',').map(Number)
+  const opcodeInput = 1;
+
+  console.log('part a:')
+  runOpcodeInstructions(instructions, opcodeInput);
 }
 const b = () => {
-  console.log(`b = ?`)
+  const instructions = inputs.split(',').map(Number)
+  const opcodeInput = 5;
+
+  console.log('part b:')
+  runOpcodeInstructions(instructions, opcodeInput);
 }
 
 var runningAsScript = !module.parent;
