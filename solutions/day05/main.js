@@ -9,28 +9,19 @@ const a = () => {
   const defaultInput = 1;
 
   for(var head = 0; head < instructions.length; ) {
-    // console.log("TCL: a -> head", head)
     const instruction = instructions[head];
-    // console.log("TCL: a -> instruction", instruction)
     const opcode = Number(String(instruction).slice(-2))
-    console.log("TCL: a -> opcode", opcode)
 
+    // input
     if(opcode === 3) {
-      // input
       instructions[instructions[head + 1]] = defaultInput;
       head += 2;
-    } else if (opcode === 4) {
-      // output
+    // output
+    } else if (opcode === 4) { 
       console.log(`diagnostic check: ${instructions[instructions[head + 1]]}`)
       head += 2;
-    } 
-    // else if (opcode === 1) {
-    //   // add
-    // } else if (opcode === 2) {
-    //   // multiply
-    // }
-    else if (opcode === 1 || opcode === 2) {
-      // add or multiply
+    // add or multiply
+    }  else if (opcode === 1 || opcode === 2) {
       const paramModes = String(instruction).slice(0, String(instruction).length - 2).split('').map(Number).reverse()
       const c = paramModes[0] || 0
       const b = paramModes[1] || 0
@@ -48,10 +39,8 @@ const a = () => {
       }
 
       head += 4;
-    } 
-    else if (opcode === 99) {
       // return
-      console.log('OPCODE 99')
+    } else if (opcode === 99) {
       break;
     } else {
       console.log('bad', opcode)
