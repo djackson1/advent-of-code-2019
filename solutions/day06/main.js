@@ -3,17 +3,16 @@ const { getInputs } = require('../../utils/files')
 const inputs =  getInputs(6)
 
 const getDistanceMap = orbits => {
-  const distanceMap = {}
+  const distanceMap = {
+    'COM': []
+  }
 
   // specifically use a for loop so we can alter the array length dynamically
   for(var i=0; i<orbits.length; i++) {
     const [baseObj, objInOrbit] = orbits[i]
     
-    // assume "COM" is always the center/base obj
-    if(baseObj === 'COM') {
-      distanceMap[objInOrbit] = ['COM'];
-    // if we have a distance map for the baseObj then just add 1
-    } else if (distanceMap[baseObj]) {
+    // add to the baseObj's distance map if it exists
+    if (distanceMap[baseObj]) {
       distanceMap[objInOrbit] = [ ...distanceMap[baseObj], baseObj]
     // wait until we have more data
     } else {
@@ -37,24 +36,28 @@ const a = () => {
   console.log(`a = ${countTotalOrbits(inputs)}`)
 }
 
+const distanceToCommonObj = (orbitArr, obj) => {
+  return orbitArr.slice(0, orbitArr.indexOf(obj)).length
+}
+
 const findDistanceToSanta = (distanceMap) => {
   // reverse the order to find the nearest from us (otherwise COM would be the first found)
   const you = distanceMap['YOU'].reverse()
-  const san = distanceMap['SAN']
+  const san = distanceMap['SAN'].reverse()
 
-  // returns the nearest obj and the amount of jumps we need to take
-  const nearestOrbit = you.reduce((nearest, obj, n) => {
+  // returns the nearest obj
+  const nearestOrbit = you.reduce((nearest, obj) => {
+    // if we've already found the nearest just exit
     if(nearest) return nearest
 
+    // check if the next closest object is also has SAN in orbit
     if(san.includes(obj)) {
-      return [obj, n]
+      return obj
     }
   }, null)
 
-  // find our nearest orbit and then the count to get to santa
-  const distanceFromSan = san.slice(san.indexOf(nearestOrbit[0]) + 1).length
-
-  return nearestOrbit[1] + distanceFromSan
+  // find the distance to common orbit for both YOU and SAN
+  return distanceToCommonObj(you, nearestOrbit) + distanceToCommonObj(san, nearestOrbit)
 }
 
 const findTransferCount = (orbitArr) => {
