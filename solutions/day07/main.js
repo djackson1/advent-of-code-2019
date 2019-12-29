@@ -1,6 +1,6 @@
 const { getInputs } = require('../../utils/files')
 const { permute } = require('../../utils/sets')
-const { getOpcodeOutputs, runOpcodeInstructions } = require('../../utils/opcode/v2')
+const { Opcode } = require('../../utils/opcode/v3')
 const inputs =  getInputs(7)
 
 const getMaxThrusterSignal = (instructions) => {
@@ -8,19 +8,40 @@ const getMaxThrusterSignal = (instructions) => {
 
   let maxOutput = 0
   phaseSettings.forEach(setting => {
-    runOpcodeInstructions(instructions, [setting[0], 0], true)
-    runOpcodeInstructions(instructions, [setting[1], getOpcodeOutputs()[0]], true)
-    runOpcodeInstructions(instructions, [setting[2], getOpcodeOutputs()[0]], true)
-    runOpcodeInstructions(instructions, [setting[3], getOpcodeOutputs()[0]], true)
-    runOpcodeInstructions(instructions, [setting[4], getOpcodeOutputs()[0]], true)
+    // setup 
+    const computers = [
+      new Opcode(instructions),
+      new Opcode(instructions),
+      new Opcode(instructions),
+      new Opcode(instructions),
+      new Opcode(instructions),
+    ]
 
-    const thrusterOutput = getOpcodeOutputs()[0]
-    if(thrusterOutput > maxOutput) {
-      maxOutput = thrusterOutput
+    // initial inputs
+    computers.forEach((c,i) => {
+      c.addInput(setting[i])
+    })
+
+    computers[0].addInput(0)
+    // get the first output from computer 0 to use an input
+    computers[1].addInput(computers[0].run())
+    // output from computer 1 as input, etc.
+    computers[2].addInput(computers[1].run())
+    computers[3].addInput(computers[2].run())
+    computers[4].addInput(computers[3].run())
+
+    const output = computers[4].run()
+
+    if(output > maxOutput) {
+      maxOutput = output
     }
   })
 
   return maxOutput
+}
+
+const getMaxFeedbackThrusterSignal = (instructions) => {
+
 }
 
 const a = () => {
@@ -37,5 +58,6 @@ if(runningAsScript) {
 }
 
 module.exports = {
-  getMaxThrusterSignal
+  getMaxFeedbackThrusterSignal,
+  getMaxThrusterSignal,
 }
