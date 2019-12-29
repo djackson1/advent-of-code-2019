@@ -51,7 +51,7 @@ class Opcode {
         yield { type: 'OUTPUT', value: output }
 
         this.head += 2;
-      // add or multiply
+      // add (1), multiply (2), less than (7) or equals (8)
       } else if (opcode === 1 || opcode === 2 || opcode === 7 || opcode === 8) {
         // 0 = position; 1 = immediate
         const v1 = c === POSITION_MODE ? this.instructions[this.instructions[this.head + 1]] : this.instructions[this.head + 1]
@@ -69,7 +69,7 @@ class Opcode {
         this.instructions[outputPosition] = output
   
         this.head += 4;
-      // jumps
+      // jump if not equals (5), jump if equals (6)
       } else if (opcode === 5 || opcode === 6) {
         const v1 = c === POSITION_MODE ? this.instructions[this.instructions[this.head + 1]] : this.instructions[this.head + 1]
         const v2 = b === POSITION_MODE ? this.instructions[this.instructions[this.head + 2]] : this.instructions[this.head + 2]
