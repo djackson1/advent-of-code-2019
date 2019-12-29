@@ -2,7 +2,7 @@ const POSITION_MODE = 0
 const IMMEDIATE_MODE = 1
 
 class Opcode {
-  constructor(instructions, { isSilent = false }) {
+  constructor(instructions, { isSilent = false } = {}) {
     this.inputs = []
 
     this.instructions = typeof instructions === 'string'
@@ -48,7 +48,7 @@ class Opcode {
         if(!this.isSilentOutput) {
           console.log(`diagnostic check: ${output}`)
         }
-        yield output
+        yield { type: 'OUTPUT', value: output }
 
         this.head += 2;
       // add or multiply
@@ -82,6 +82,7 @@ class Opcode {
   
       // return
       } else if (opcode === 99) {
+        yield { type: 'PROGRAM_END' }
         break;
       } else {
         console.log('bad', opcode)
