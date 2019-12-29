@@ -24,6 +24,26 @@ const createLayerData = (imageData, width, height) => {
   }, [])
 }
 
+const createStackedLayers = (imageData, width, height) => {
+  const layers = createLayerData(imageData, width, height)
+
+  const base = layers.shift()
+  layers.reduce((image, layer) => {
+
+    layer.forEach((rowData, row) => {
+      rowData.forEach((data, col) => {
+        if(base[row][col] === 2) {
+          base[row][col] = data
+        }
+      })
+    })
+
+    return image
+  }, base)
+  
+  return base
+}
+
 const a = () => {
   const [w,h] = inputs[0].split(',').map(Number)
   const layers = createLayerData(inputs[1], w, h)
@@ -44,20 +64,20 @@ const a = () => {
       layers: l
     }
   })
-  // console.log("TCL: layerMetadata", layerMetadata)
   
   const sortedLayers = [...layerMetadata].sort((a, b) => a.counts[0] - b.counts[0])
-  console.log("TCL: sortedLayers", sortedLayers)
-  // console.log("TCL: a -> sortedLayers", sortedLayers.map(n => n.zeroCount))
   const { counts } = sortedLayers[0]
 
   console.log(`a = ${counts[1] * counts[2]}`)
-
-
-  
 }
 const b = () => {
+  const [w,h] = inputs[0].split(',').map(Number)
+  const stackedLayers = createStackedLayers(inputs[1], w,h)
+
   console.log(`b = ?`)
+  stackedLayers.forEach(r => {
+    console.log(r.join(' ').replace(/0/g, '.').replace(/1/g, 'X'))
+  })
 }
 
 var runningAsScript = !module.parent;
@@ -67,5 +87,6 @@ if(runningAsScript) {
 }
 
 module.exports = {
-  createLayerData
+  createLayerData,
+  createStackedLayers
 }
