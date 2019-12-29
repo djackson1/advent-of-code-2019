@@ -52,3 +52,5 @@ describe('day ${day}', () => {
 })" >> $folder_path/main.spec.js
 
 cd -
+
+git checkout -b day/$day
