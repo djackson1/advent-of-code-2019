@@ -25,9 +25,36 @@ const createLayerData = (imageData, width, height) => {
 }
 
 const a = () => {
-  const solution = 0
+  const [w,h] = inputs[0].split(',').map(Number)
+  const layers = createLayerData(inputs[1], w, h)
 
-  console.log(`a = ${solution}`)
+  const layerMetadata = layers.map(l => {
+    const counts = l.reduce((acc, row) => {
+      row.forEach(n => {
+        if(!acc[n]) acc[n] = 0
+        
+        acc[n]++
+      })
+
+      return acc
+    }, {})
+
+    return {
+      counts,
+      layers: l
+    }
+  })
+  // console.log("TCL: layerMetadata", layerMetadata)
+  
+  const sortedLayers = [...layerMetadata].sort((a, b) => a.counts[0] - b.counts[0])
+  console.log("TCL: sortedLayers", sortedLayers)
+  // console.log("TCL: a -> sortedLayers", sortedLayers.map(n => n.zeroCount))
+  const { counts } = sortedLayers[0]
+
+  console.log(`a = ${counts[1] * counts[2]}`)
+
+
+  
 }
 const b = () => {
   console.log(`b = ?`)
