@@ -23,6 +23,28 @@ const permute = (input) => {
   return __permute(input)
 }
 
+const spliceTogetherArray = arrays => {
+  const arr2 = arrays.map(([_, arr]) => arr)
+
+  const max = arr2.reduce((acc, n) => {
+    if (n.length > acc) return n.length
+
+    return acc
+  }, 0)
+
+  const sequences = []
+  for (let i = 0; i < max; i++) {
+    arr2.forEach(arr => {
+      if (arr.length > 0) {
+        sequences.push(arr.shift())
+      }
+    })
+  }
+
+  return sequences
+}
+
 module.exports = {
   permute,
+  spliceTogetherArray,
 }
