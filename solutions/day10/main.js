@@ -3,6 +3,12 @@ const { spliceTogetherArray } = require('../../utils/sets')
 
 const inputs = getInputs(10)
 
+/**
+ * Get an array of all asteroids with their positions
+ *
+ * @param {string[]} rows
+ * @returns {Array}
+ */
 const getAllAsteroids = (rows) => {
   return rows.reduce((acc, r, rowId) => {
     r.trim().split('').forEach((d, colId) => {
@@ -15,7 +21,7 @@ const getAllAsteroids = (rows) => {
 }
 
 /**
- * Returns the angle between two points with UP being the most negative
+ * Returns the angle between two points with UP being the smallest value (for easy sorting)
  *
  * @param {Number} x
  * @param {Number} y
@@ -34,7 +40,6 @@ const getAngleMapOfAsteroid = ({ x, y }, asteroids) => {
   const angleMap = asteroids.reduce((acc, { x: x2, y: y2 }) => {
     if (x !== x2 || y !== y2) {
       const angle = getAngle(x, y, x2, y2)
-      // console.log(`{${x},${y}} {${x2},${y2}} ${angle}`)
 
       const dx = x - x2
       const dy = y - y2
@@ -95,10 +100,10 @@ const b = () => {
   // use part a an input
   const sequence = getAsteroidVaporizeSequence(inputs, { x: 14, y: 17 })
 
-  console.log(`x: ${sequence[199].x}`)
-  console.log(`y: ${sequence[199].y}`)
+  // neat array trick to destructure at an index...
+  const { 199: { x, y } } = sequence
 
-  console.log(`b = ${sequence[199].x * 100 + sequence[199].y}`)
+  console.log(`b = [x: ${x}] [y: ${y}] [ANSWER = ${x * 100 + y}]`)
 }
 
 var runningAsScript = !module.parent
