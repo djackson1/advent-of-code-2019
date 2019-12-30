@@ -4,16 +4,18 @@ const { Opcode } = require('../../utils/opcode/v3')
 const [input] = getInputs(9)
 
 const a = () => {
+  console.log('a = ?')
   const computer = new Opcode(input)
-  console.log('TCL: a -> input', input)
   computer.addInput(1)
 
   computer.runUntilFinished()
-
-  // console.log(`a = ${solution}`)
 }
 const b = () => {
   console.log('b = ?')
+  const computer = new Opcode(input)
+  computer.addInput(2)
+
+  computer.runUntilFinished()
 }
 
 var runningAsScript = !module.parent
