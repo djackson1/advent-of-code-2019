@@ -1,19 +1,20 @@
 const POSITION_MODE = 0
-// const IMMEDIATE_MODE = 1
+const IMMEDIATE_MODE = 1
 
 class Opcode {
-  constructor (instructions, { isSilent = false } = {}) {
-    this.inputs = []
+  constructor (instructions, { isSilent = false, inputs = [] } = {}) {
+    this.inputs = inputs
 
     this.instructions = typeof instructions === 'string'
       ? instructions.split(',').map(Number)
       : instructions
 
-    this.head = 0
+    this.__head = 0
+    this.__relativeBase = 0
+    this.__outputs = []
+    this.isSilentOutput = isSilent
 
     this.runGenerator = this.__run()
-
-    this.isSilentOutput = isSilent
   }
 
   addInput (input) {
@@ -28,10 +29,67 @@ class Opcode {
     return this.runGenerator.next().value
   }
 
+  runUntilFinished () {
+    while (true) {
+      const output = this.run()
+
+      if (['PROGRAM_END', 'ERROR_NO_VALUE_TO_OUTPUT'].includes(output.type)) {
+        break
+      }
+    }
+  }
+
+  get relativeBase () {
+    return this.__relativeBase
+  }
+
+  get outputs () {
+    return this.__outputs
+  }
+
+  getParams (paramModes) {
+    return paramModes.map((paramMode, i) => {
+      const position = this.__head + i + 1
+
+      return paramMode === POSITION_MODE
+        ? this.instructions[this.instructions[position]]
+        : paramMode === IMMEDIATE_MODE
+          ? this.instructions[position]
+          : this.instructions[this.__relativeBase + this.instructions[position]]
+    })
+  }
+
+  processInstruction () {
+    const instruction = this.instructions[this.__head]
+    const opcode = Number(String(instruction).slice(-2))
+
+    return {
+      instruction,
+      opcode,
+    }
+  }
+
+  getParamIndex (paramMode, index) {
+    return paramMode === POSITION_MODE
+      ? this.instructions[this.__head + index]
+      : paramMode === IMMEDIATE_MODE
+        ? this.__head + index
+        : this.__relativeBase + this.instructions[this.__head + index]
+  }
+
+  setInstruction (position, value) {
+    if (isNaN(value)) return
+
+    while (position > this.instructions.length) {
+      this.instructions.push(1111)
+    }
+
+    this.instructions[position] = value
+  }
+
   * __run () {
-    for (; this.head < this.instructions.length;) {
-      const instruction = this.instructions[this.head]
-      const opcode = Number(String(instruction).slice(-2))
+    for (; this.__head < this.instructions.length;) {
+      const { instruction, opcode } = this.processInstruction()
 
       const paramModes = String(instruction).slice(0, String(instruction).length - 2).split('').map(Number).reverse()
       const c = paramModes[0] || POSITION_MODE
@@ -40,46 +98,58 @@ class Opcode {
 
       // input
       if (opcode === 3) {
-        this.instructions[this.instructions[this.head + 1]] = this.getNextInput()
-        this.head += 2
+        const paramIndex = this.getParamIndex(c, 1)
+        const input = this.getNextInput()
+        this.setInstruction(paramIndex, input)
+
+        this.__head += 2
       // output
       } else if (opcode === 4) {
-        const output = this.instructions[this.instructions[this.head + 1]]
-        if (!this.isSilentOutput) {
-          console.log(`diagnostic check: ${output}`)
-        }
-        yield { type: 'OUTPUT', value: output }
+        const [p1] = this.getParams([c])
 
-        this.head += 2
+        if (!this.isSilentOutput) {
+          console.log(`diagnostic check: ${p1}`)
+        }
+
+        if (typeof p1 !== 'undefined') {
+          this.__outputs.push(p1)
+          yield { type: 'OUTPUT', value: p1 }
+        } else {
+          yield { type: 'ERROR_NO_VALUE_TO_OUTPUT' }
+        }
+
+        this.__head += 2
       // add (1), multiply (2), less than (7) or equals (8)
       } else if (opcode === 1 || opcode === 2 || opcode === 7 || opcode === 8) {
-        // 0 = position; 1 = immediate
-        const v1 = c === POSITION_MODE ? this.instructions[this.instructions[this.head + 1]] : this.instructions[this.head + 1]
-        const v2 = b === POSITION_MODE ? this.instructions[this.instructions[this.head + 2]] : this.instructions[this.head + 2]
+        const [p1, p2] = this.getParams([c, b])
 
         let output
         switch (opcode) {
-        case 1: output = v1 + v2; break
-        case 2: output = v1 * v2; break
-        case 7: output = v1 < v2 ? 1 : 0; break
-        case 8: output = v1 === v2 ? 1 : 0; break
+          case 1: output = p1 + p2; break
+          case 2: output = p1 * p2; break
+          case 7: output = p1 < p2 ? 1 : 0; break
+          case 8: output = p1 === p2 ? 1 : 0; break
         }
 
-        const outputPosition = a === POSITION_MODE ? this.instructions[this.head + 3] : this.head + 3
-        this.instructions[outputPosition] = output
+        const outputPosition = this.getParamIndex(a, 3)
+        this.setInstruction(outputPosition, output)
 
-        this.head += 4
+        this.__head += 4
       // jump if not equals (5), jump if equals (6)
       } else if (opcode === 5 || opcode === 6) {
-        const v1 = c === POSITION_MODE ? this.instructions[this.instructions[this.head + 1]] : this.instructions[this.head + 1]
-        const v2 = b === POSITION_MODE ? this.instructions[this.instructions[this.head + 2]] : this.instructions[this.head + 2]
+        const [p1, p2] = this.getParams([c, b])
 
-        if ((opcode === 5 && v1 !== 0) || (opcode === 6 && v1 === 0)) {
-          this.head = v2
+        if ((opcode === 5 && p1 !== 0) || (opcode === 6 && p1 === 0)) {
+          this.__head = p2
         } else {
-          this.head += 3
+          this.__head += 3
         }
+      } else if (opcode === 9) {
+        const [p1] = this.getParams([c])
 
+        this.__relativeBase += p1
+
+        this.__head += 2
       // return
       } else if (opcode === 99) {
         yield { type: 'PROGRAM_END' }

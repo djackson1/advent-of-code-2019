@@ -1,5 +1,5 @@
 const { getInputs } = require('../../utils/files')
-const { getOpcodeOutputs, runOpcodeInstructions } = require('../../utils/opcode')
+const { getOpcodeOutputs, runOpcodeInstructions } = require('../../utils/opcode/v2')
 const [inputs] = getInputs(5)
 
 const a = () => {
