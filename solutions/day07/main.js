@@ -1,7 +1,7 @@
 const { getInputs } = require('../../utils/files')
 const { permute } = require('../../utils/sets')
 const { Opcode } = require('../../utils/opcode/v3')
-const inputs =  getInputs(7)
+const inputs = getInputs(7)
 
 const setupComputers = (instructions, setting) => {
   const computers = setting.reduce((acc, _, index) => {
@@ -26,11 +26,11 @@ const runComputerCycle = (computers) => {
   computers[3].addInput(computers[2].run().value)
   computers[4].addInput(computers[3].run().value)
 
-  return computers[4].run()  
+  return computers[4].run()
 }
 
 const getMaxThrusterSignal = (instructions) => {
-  const phaseSettings = permute([0,1,2,3,4])
+  const phaseSettings = permute([0, 1, 2, 3, 4])
 
   let maxOutput = 0
   phaseSettings.forEach(setting => {
@@ -38,7 +38,7 @@ const getMaxThrusterSignal = (instructions) => {
 
     const output = runComputerCycle(computers)
 
-    if(output.value > maxOutput) {
+    if (output.value > maxOutput) {
       maxOutput = output.value
     }
   })
@@ -47,22 +47,22 @@ const getMaxThrusterSignal = (instructions) => {
 }
 
 const getMaxFeedbackThrusterSignal = (instructions) => {
-  const phaseSettings = permute([5,6,7,8,9])
+  const phaseSettings = permute([5, 6, 7, 8, 9])
 
   let maxOutput = 0
   phaseSettings.forEach(setting => {
     const computers = setupComputers(instructions, setting)
 
     // iterate the computer cycle
-    let lastOutput 
-    while(true) {
+    let lastOutput
+    while (true) {
       const output = runComputerCycle(computers)
 
-      if(output.type === 'PROGRAM_END') {
-        if(lastOutput > maxOutput) {
+      if (output.type === 'PROGRAM_END') {
+        if (lastOutput > maxOutput) {
           maxOutput = lastOutput
         }
-        break;
+        break
       } else if (output.type === 'OUTPUT') {
         computers[0].addInput(output.value)
         lastOutput = output.value
@@ -80,10 +80,10 @@ const b = () => {
   console.log(`b = ${getMaxFeedbackThrusterSignal(inputs[0])}`)
 }
 
-var runningAsScript = !module.parent;
-if(runningAsScript) {
-  a();
-  b();
+var runningAsScript = !module.parent
+if (runningAsScript) {
+  a()
+  b()
 }
 
 module.exports = {
