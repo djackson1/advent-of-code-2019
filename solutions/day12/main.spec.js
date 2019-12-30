@@ -1,6 +1,6 @@
 const chai = require('chai')
 const { expect } = chai
-const { calculateTotalEnergyAfterSteps } = require('./main')
+const { calculateTotalEnergyAfterSteps, findRepeatingStepCount } = require('./main')
 
 describe('day 12', () => {
   const examples = [
@@ -30,7 +30,17 @@ describe('day 12', () => {
     })
   })
 
+  const examples2 = [
+    [
+      `<x=-8, y=-10, z=0>
+      <x=5, y=5, z=10>
+      <x=2, y=-7, z=3>
+      <x=9, y=-8, z=-3>`,
+    ],
+  ]
+
   describe('part b examples', () => {
     // tests
+    expect(findRepeatingStepCount(examples2[0][0])).to.equal(4686774924)
   })
 })
