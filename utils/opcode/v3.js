@@ -53,6 +53,10 @@ class Opcode {
     return this.__outputs
   }
 
+  get isFinished () {
+    return this.__isFinished
+  }
+
   getParams (paramModes) {
     return paramModes.map((paramMode, i) => (
       this.instructions[this.getParamIndex(paramMode, i + 1)]
@@ -151,6 +155,7 @@ class Opcode {
 
         this.__head += 2
       } else if (opcode === 99) {
+        this.__isFinished = true
         yield { type: TYPES.PROGRAM_END }
         break
       } else {
