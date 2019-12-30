@@ -19,22 +19,19 @@ echo "const { getInputs } = require('../../utils/files')
 const inputs = getInputs($1)
 
 const a = () => {
-  const solution = 0
-
-  console.log("'`a = ${solution}`'")
+  console.log('a = ?')
 }
 const b = () => {
-  console.log("'`b = ?`'")
+  console.log('b = ?')
 }
 
-var runningAsScript = !module.parent;
+var runningAsScript = !module.parent
 if (runningAsScript) {
   a()
   b()
 }
 
-module.exports = {}
-" >> $folder_path/main.js
+module.exports = {}" >> $folder_path/main.js
 
 touch $folder_path/main.spec.js
 echo -n > $folder_path/main.spec.js
