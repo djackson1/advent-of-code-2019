@@ -16,7 +16,7 @@ touch $folder_path/main.js
 echo -n > $folder_path/main.js
 echo "const { getInputs } = require('../../utils/files')
 
-const inputs =  getInputs($1)
+const inputs = getInputs($1)
 
 const a = () => {
   const solution = 0
@@ -28,9 +28,9 @@ const b = () => {
 }
 
 var runningAsScript = !module.parent;
-if(runningAsScript) {
-  a();
-  b();
+if (runningAsScript) {
+  a()
+  b()
 }
 
 module.exports = {}
@@ -39,7 +39,7 @@ module.exports = {}
 touch $folder_path/main.spec.js
 echo -n > $folder_path/main.spec.js
 echo "const chai = require('chai')
-const expect = chai.expect
+const { expect } = chai
 
 describe('day ${day}', () => {
   describe('part a examples', () => {
