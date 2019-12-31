@@ -81,9 +81,11 @@ describe('day 14', () => {
 
   describe('part b examples', () => {
     examples.forEach(([instructions, _, fuelCount], idx) => {
-      it(`should calculate the correct amount of ORE for FUEL for scenario ${idx} `, () => {
-        expect(maximumFuelForATrillionOre(instructions)).to.equal(fuelCount)
-      })
+      if (fuelCount) {
+        it(`should calculate the correct amount of ORE for FUEL for scenario ${idx} `, () => {
+          expect(maximumFuelForATrillionOre(instructions)).to.equal(fuelCount)
+        })
+      }
     })
   })
 })
