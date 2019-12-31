@@ -118,6 +118,8 @@ if (runningAsScript) {
 }
 
 module.exports = {
+  a,
+  b,
   calculateTotalEnergyAfterSteps,
   findRepeatingStepCount,
 }

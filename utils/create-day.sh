@@ -15,7 +15,6 @@ touch $folder_path/input.txt
 touch $folder_path/main.js
 echo -n > $folder_path/main.js
 echo "const { getInputs } = require('../../utils/files')
-
 const inputs = getInputs($1)
 
 const a = () => {
@@ -31,12 +30,16 @@ if (runningAsScript) {
   b()
 }
 
-module.exports = {}" >> $folder_path/main.js
+module.exports = {
+  a,
+  b
+}" >> $folder_path/main.js
 
 touch $folder_path/main.spec.js
 echo -n > $folder_path/main.spec.js
 echo "const chai = require('chai')
 const { expect } = chai
+// const { ? } = require('./main')
 
 describe('day ${day}', () => {
   describe('part a examples', () => {
