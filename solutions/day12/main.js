@@ -57,7 +57,6 @@ const calculateTotalEnergyAfterSteps = (instructions, steps) => {
 }
 
 const findRepeatedStep = (moons) => {
-  console.log('TCL: findRepeatedStep -> moons', moons)
   const originalMoons = JSON.stringify([...moons])
 
   const stepPositions = []
@@ -77,7 +76,6 @@ const findRepeatedStep = (moons) => {
 
     if (JSON.stringify(moons) === originalMoons) {
       stepPositions.push(i)
-      console.log(i, moons)
 
       if (stepPositions.length === 2) {
         return stepPositions[1] - stepPositions[0]
@@ -92,7 +90,6 @@ const findRepeatingStepCount = (inputs) => {
 
     return { x, y, z }
   })
-  console.log('TCL: findRepeatingStepCount -> moonData', moonData)
 
   const xs = moonData.map(({ x }) => ([x, 0]))
   const ys = moonData.map(({ y }) => ([y, 0]))
