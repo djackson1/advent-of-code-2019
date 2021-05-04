@@ -1,4 +1,4 @@
-# advent of code 2019
+# advent of code 2019
 
 ## solving
 
@@ -21,3 +21,9 @@ run specific day
 ```
 npm t "day 12"
 ```
+
+## !?
+
+Day 14!?
+
+A lot further than previous years before the burnout and boredom (boredom!? I'm so sorry [Eric](https://github.com/topaz)) kicked in, I mean fatigue!!
